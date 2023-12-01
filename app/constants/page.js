@@ -1,0 +1,13 @@
+export const ROUTE_LOGIN = "/";
+export const ROUTE_SIGNUP = "/signup";
+export const ROUTE_DASHBOARD = "/dashboard";
+export const ROUTE_CUSTOMER_LIST = "/customer";
+export const ROUTE_SETTINGS = "/setting";
+export const ROUTE_CONTACT_US = "/contact";
+export const ROUTE_PRICING = "/pricing";
+export const ROUTE_PERSONAL_DETAILS = "/personaldetails";
+export const ROUTE_CHANGE_PASSWORD = "/changepassword";
+export const ROUTE_MORE_SETTINGS = "/moresettings";
+export const ROUTE_MESSAGES = "/messages";
+export const AUTH_TOKEN = "token";
+export const USER_NAME = "username";
