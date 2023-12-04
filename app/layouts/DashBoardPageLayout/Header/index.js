@@ -12,6 +12,7 @@ import { useRouter } from "next/router";
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 const Header = ({ setOpenDrawer, handleDrawerToggle, openDrawer }) => {
+  console.log("Header");
   const { isMobile } = CommonContext();
   const router = useRouter();
   const [anchorElUser, setAnchorElUser] = useState(null);

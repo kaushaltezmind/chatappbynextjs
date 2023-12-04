@@ -78,7 +78,6 @@ const ShowMessages = ({
   } = CommonContext();
   const param = router.query;
 
-  console.log(param);
   const [chatHistory, setChatHistory] = useState([]);
   const [fullMessage, setFullMessage] = useState("");
   const [isReply, setIsReply] = useState({

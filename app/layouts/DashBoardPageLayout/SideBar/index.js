@@ -120,7 +120,9 @@ const SideBar = ({ open, window, mobileOpen, handleDrawerToggle }) => {
             >
               <Box
                 sx={
-                  location.pathname === item.path
+                  location.pathname === item.path ||
+                  (item.path === ROUTE_MESSAGES &&
+                    location.pathname.startsWith("/messages"))
                     ? {
                         display: "flex",
                         justifyContent: "left",
@@ -144,7 +146,9 @@ const SideBar = ({ open, window, mobileOpen, handleDrawerToggle }) => {
               >
                 <ListItemIcon
                   sx={
-                    location.pathname === item.path
+                    location.pathname === item.path ||
+                    (item.path === ROUTE_MESSAGES &&
+                      location.pathname.startsWith("/messages"))
                       ? {
                           minWidth: "unset",
                           mr: 0.3,
@@ -157,7 +161,9 @@ const SideBar = ({ open, window, mobileOpen, handleDrawerToggle }) => {
                 </ListItemIcon>
                 <Typography
                   sx={
-                    location.pathname === item.path
+                    location.pathname === item.path ||
+                    (item.path === ROUTE_MESSAGES &&
+                      location.pathname.startsWith("/messages"))
                       ? {
                           color: "#0064D9",
                           fontWeight: "600",

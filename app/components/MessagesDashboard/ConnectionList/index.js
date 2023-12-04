@@ -16,7 +16,7 @@ const ConnectionList = ({
 }) => {
   const [toggle, setToggle] = useState(true);
   const router = useRouter();
-  const param = router.pathname;
+  const param = router.query;
 
   const { isMobile, setIsMessageDashboard, setIsShowMessages, setIsProfile } =
     CommonContext();

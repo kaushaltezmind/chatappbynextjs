@@ -14,7 +14,7 @@ const NewUserList = ({
   const { isMobile, setIsMessageDashboard, setIsShowMessages, setIsProfile } =
     CommonContext();
   const router = useRouter();
-  const param = router.pathname;
+  const param = router.query;
   return (
     <Box
       key={i}
