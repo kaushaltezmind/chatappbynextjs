@@ -1,10 +1,27 @@
-import { Box, Typography, TextField, Button } from "@mui/material";
+import {
+  Box,
+  Typography,
+  TextField,
+  Button,
+  Avatar,
+  Badge,
+} from "@mui/material";
 import { useEffect, useState } from "react";
 import { SettingApi } from "../../../app/services/settingApi";
 import { useRouter } from "next/router";
 import Settings from "../index";
+import CameraAltOutlinedIcon from "@mui/icons-material/CameraAltOutlined";
+import { CommonContext } from "@/app/store/context/commonContextProvider";
+import { config } from "@/app/config";
+// import image from "../../../../../../Training/InvoiceCustomer/uploads/Kaushal.jpg"
+
+const cameraIcon = { icon: <CameraAltOutlinedIcon /> };
+
+let file = {};
 
 const PersonalDetails = () => {
+  const { image, setImage } = CommonContext();
+  const [selectedImage, setSelectedImage] = useState(null);
   const router = useRouter();
   const [flag, setFlag] = useState(false);
   const [userData, setUserData] = useState({
@@ -32,6 +49,7 @@ const PersonalDetails = () => {
           alert(res.data.errorMessage);
         } else {
           setUserData(res.data.data);
+          setSelectedImage(config.apiUrl + res.data.data.image);
         }
       },
       (err) => {
@@ -39,6 +57,8 @@ const PersonalDetails = () => {
       }
     );
   }, []);
+
+  console.log(userData);
 
   const handleUpdate = () => {
     console.log(userData);
@@ -63,6 +83,19 @@ const PersonalDetails = () => {
           console.log(err);
         }
       );
+      const formData = new FormData();
+      formData.append("file", file);
+
+      SettingApi.uploadImage(
+        formData,
+        (res) => {
+          console.log("Response : ", res);
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
+      setImage(!image);
     }
   };
 
@@ -78,6 +111,23 @@ const PersonalDetails = () => {
       portfoliourl: "",
       address: "",
     });
+  };
+
+  const handleBadgeChange = () => {
+    document.getElementById("fileInput").click();
+  };
+
+  const handleFileChange = (event) => {
+    file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+
+      reader.onload = (e) => {
+        setSelectedImage(e.target.result);
+      };
+
+      reader.readAsDataURL(file);
+    }
   };
 
   return (
@@ -213,10 +263,10 @@ const PersonalDetails = () => {
             </Box>
             <Box
               sx={{
-                height: "307px",
                 border: "1px solid #E8E8E8",
                 borderRadius: "16px",
                 textAlign: "left",
+                flex: 1,
               }}
             >
               <Box
@@ -280,107 +330,173 @@ const PersonalDetails = () => {
           <Box
             sx={{
               flex: 1,
-              height: "454px",
-              border: "1px solid #E8E8E8",
-              borderRadius: "16px",
-              textAlign: "left",
+              display: "flex",
+              flexDirection: "column",
+              gap: "24px",
             }}
           >
             <Box
-              sx={{ padding: "14px 23px", borderBottom: "1px solid #DEE4EA" }}
+              sx={{
+                flex: 1,
+                border: "1px solid #E8E8E8",
+                borderRadius: "16px",
+                textAlign: "left",
+
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "left",
+              }}
             >
-              <Typography sx={{ fontSize: "16px", fontWeight: 600 }}>
-                Contact information
-              </Typography>
+              <Box
+                sx={{ padding: "14px 23px", borderBottom: "1px solid #DEE4EA" }}
+              >
+                <Typography sx={{ fontSize: "16px", fontWeight: 600 }}>
+                  Upload your profile photo
+                </Typography>
+              </Box>
+
+              <Box sx={{ padding: "23px 23px" }}>
+                <Badge
+                  color="secondary"
+                  overlap="circular"
+                  badgeContent={<CameraAltOutlinedIcon sx={{ fontSize: 18 }} />}
+                  sx={{
+                    width: "82px",
+                    cursor: "pointer",
+                    "& .MuiBadge-badge": {
+                      backgroundColor: "black",
+                      border: "1px solid white",
+                      width: "28px",
+                      height: "28px",
+                      borderRadius: "50%",
+                    },
+                  }}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "right",
+                  }}
+                  onClick={handleBadgeChange}
+                >
+                  <Avatar
+                    alt="Remy Sharp"
+                    src={selectedImage}
+                    sx={{ width: 82, height: 82, border: "1px solid #DEE4EA" }}
+                  />
+
+                  <TextField
+                    type="file"
+                    id="fileInput"
+                    accept="image/*"
+                    style={{ display: "none" }}
+                    onChange={handleFileChange}
+                  />
+                </Badge>
+              </Box>
             </Box>
             <Box
               sx={{
-                display: "flex",
-                flexDirection: "column",
-                padding: "24px",
-                gap: "29px",
+                flex: 1,
+                border: "1px solid #E8E8E8",
+                borderRadius: "16px",
+                textAlign: "left",
               }}
             >
-              <Box sx={{ display: "flex", flexDirection: "column" }}>
-                <TextField
-                  id="outlined-basic-7"
-                  type="number"
-                  label="Contact phone"
-                  variant="outlined"
-                  value={userData.mobilenumber}
-                  onChange={(e) => {
-                    setUserData({
-                      ...userData,
-                      mobilenumber: Number(e.target.value),
-                    });
-                  }}
-                />
-                {flag === true && !userData.mobilenumber && (
-                  <Typography
-                    color="error"
-                    sx={{
-                      fontSize: "10px",
-                      marginTop: "5px",
-                      marginBottom: "-20px",
-                      marginLeft: "14px",
-                    }}
-                  >
-                    Please enter contact number
-                  </Typography>
-                )}
+              <Box
+                sx={{ padding: "14px 23px", borderBottom: "1px solid #DEE4EA" }}
+              >
+                <Typography sx={{ fontSize: "16px", fontWeight: 600 }}>
+                  Contact information
+                </Typography>
               </Box>
-              <TextField
-                disabled
-                id="filled-disabled"
-                label="Email"
-                variant="outlined"
-                value={userData.email}
-              />
-              <TextField
-                id="outlined-basic-9"
-                type="text"
-                label="Portfolio url"
-                variant="outlined"
-                value={userData.portfoliourl}
-                onChange={(e) => {
-                  setUserData({
-                    ...userData,
-                    portfoliourl: e.target.value,
-                  });
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  padding: "24px",
+                  gap: "29px",
                 }}
-              />
-              <Box sx={{ display: "flex", flexDirection: "column" }}>
+              >
+                <Box sx={{ display: "flex", flexDirection: "column" }}>
+                  <TextField
+                    id="outlined-basic-7"
+                    type="number"
+                    label="Contact phone"
+                    variant="outlined"
+                    value={userData.mobilenumber}
+                    onChange={(e) => {
+                      setUserData({
+                        ...userData,
+                        mobilenumber: Number(e.target.value),
+                      });
+                    }}
+                  />
+                  {flag === true && !userData.mobilenumber && (
+                    <Typography
+                      color="error"
+                      sx={{
+                        fontSize: "10px",
+                        marginTop: "5px",
+                        marginBottom: "-20px",
+                        marginLeft: "14px",
+                      }}
+                    >
+                      Please enter contact number
+                    </Typography>
+                  )}
+                </Box>
                 <TextField
-                  id="outlined-multiline-flexible-2"
-                  label="Address"
-                  multiline
-                  rows={4}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      height: "110px",
-                    },
-                  }}
-                  value={userData.address}
+                  disabled
+                  id="filled-disabled"
+                  label="Email"
+                  variant="outlined"
+                  value={userData.email}
+                />
+                <TextField
+                  id="outlined-basic-9"
+                  type="text"
+                  label="Portfolio url"
+                  variant="outlined"
+                  value={userData.portfoliourl}
                   onChange={(e) => {
                     setUserData({
                       ...userData,
-                      address: e.target.value,
+                      portfoliourl: e.target.value,
                     });
                   }}
                 />
-                {flag === true && !userData.address && (
-                  <Typography
-                    color="error"
+                <Box sx={{ display: "flex", flexDirection: "column" }}>
+                  <TextField
+                    id="outlined-multiline-flexible-2"
+                    label="Address"
+                    multiline
+                    rows={4}
                     sx={{
-                      fontSize: "10px",
-                      marginTop: "5px",
-                      marginBottom: "-20px",
-                      marginLeft: "14px",
+                      "& .MuiOutlinedInput-root": {
+                        height: "110px",
+                      },
                     }}
-                  >
-                    Please enter address
-                  </Typography>
-                )}
+                    value={userData.address}
+                    onChange={(e) => {
+                      setUserData({
+                        ...userData,
+                        address: e.target.value,
+                      });
+                    }}
+                  />
+                  {flag === true && !userData.address && (
+                    <Typography
+                      color="error"
+                      sx={{
+                        fontSize: "10px",
+                        marginTop: "5px",
+                        marginBottom: "-20px",
+                        marginLeft: "14px",
+                      }}
+                    >
+                      Please enter address
+                    </Typography>
+                  )}
+                </Box>
               </Box>
             </Box>
           </Box>

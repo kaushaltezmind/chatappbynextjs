@@ -45,4 +45,32 @@ export const SettingApi = {
         errorCallback(err);
       });
   },
+  uploadImage: (data, successCallback, errorCallback) => {
+    return axios
+      .post(config.apiUrl + "/upload", data, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem(AUTH_TOKEN)}`,
+        },
+      })
+      .then((res) => {
+        successCallback(res);
+      })
+      .catch((err) => {
+        errorCallback(err);
+      });
+  },
+  getImage: (successCallback, errorCallback) => {
+    return axios
+      .get(config.apiUrl + `/get-image`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem(AUTH_TOKEN)}`,
+        },
+      })
+      .then((res) => {
+        successCallback(res);
+      })
+      .catch((err) => {
+        errorCallback(err);
+      });
+  },
 };

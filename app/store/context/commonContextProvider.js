@@ -15,6 +15,7 @@ const CommonContextProvider = ({ children }) => {
   const [isShowMessages, setIsShowMessages] = useState(false);
   const [isProfile, setIsProfile] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [image, setImage] = useState(false);
 
   useEffect(() => {
     setWidth(window.innerWidth);
@@ -39,6 +40,8 @@ const CommonContextProvider = ({ children }) => {
     setIsProfile,
     isLoading,
     setIsLoading,
+    image,
+    setImage,
   };
 
   return (

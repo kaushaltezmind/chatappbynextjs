@@ -3,17 +3,19 @@ import MenuIcon from "@mui/icons-material/Menu";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import { Avatar } from "@mui/material";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { CommonContext } from "../../../store/context/commonContextProvider";
 import { useRouter } from "next/router";
+import { SettingApi } from "@/app/services/settingApi";
+import { config } from "@/app/config";
 
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 const Header = ({ setOpenDrawer, handleDrawerToggle, openDrawer }) => {
-  console.log("Header");
-  const { isMobile } = CommonContext();
+  const [selectedImage, setSelectedImage] = useState(null);
+  const { isMobile, image } = CommonContext();
   const router = useRouter();
   const [anchorElUser, setAnchorElUser] = useState(null);
   const handleOpenUserMenu = (event) => {
@@ -37,6 +39,26 @@ const Header = ({ setOpenDrawer, handleDrawerToggle, openDrawer }) => {
       router.push("/");
     }
   };
+
+  useEffect(() => {
+    SettingApi.getUser(
+      (res) => {
+        if (res.data.errorCode && res.data.errorCode === 1) {
+          if (res.data.errorMessage === "You are not authorised") {
+            router.push("/");
+            return;
+          }
+          alert(res.data.errorMessage);
+        } else {
+          setSelectedImage(config.apiUrl + res.data.data.image);
+        }
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
+  }, [image]);
+
   return (
     <Box
       sx={
@@ -139,11 +161,7 @@ const Header = ({ setOpenDrawer, handleDrawerToggle, openDrawer }) => {
             width: "92px",
           }}
         >
-          <Avatar
-            alt="Profile"
-            src="/assets/profile.png"
-            sx={{ width: "40px" }}
-          />
+          <Avatar alt="Profile" sx={{ width: "40px" }} src={selectedImage} />
           <SettingsOutlinedIcon
             sx={{ color: "#BFC0C2", width: "20px", cursor: "pointer" }}
           />
