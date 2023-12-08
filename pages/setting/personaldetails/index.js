@@ -12,10 +12,10 @@ import { useRouter } from "next/router";
 import Settings from "../index";
 import CameraAltOutlinedIcon from "@mui/icons-material/CameraAltOutlined";
 import { CommonContext } from "@/app/store/context/commonContextProvider";
-import { config } from "@/app/config";
-// import image from "../../../../../../Training/InvoiceCustomer/uploads/Kaushal.jpg"
-
-const cameraIcon = { icon: <CameraAltOutlinedIcon /> };
+import { toast } from "react-toastify";
+import Toast from "@/app/components/Toast";
+import { toastStyle } from "@/app/components/Toast/toast";
+import { BeatLoader } from "react-spinners";
 
 let file = {};
 
@@ -24,6 +24,7 @@ const PersonalDetails = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const router = useRouter();
   const [flag, setFlag] = useState(false);
+  const [bool, setBool] = useState(true);
   const [userData, setUserData] = useState({
     firstname: "",
     lastname: "",
@@ -46,10 +47,10 @@ const PersonalDetails = () => {
             router.push("/");
             return;
           }
-          alert(res.data.errorMessage);
+          toast.error(res.data.message, toastStyle);
         } else {
           setUserData(res.data.data);
-          setSelectedImage(config.apiUrl + res.data.data.image);
+          setSelectedImage(res.data.data.image);
         }
       },
       (err) => {
@@ -58,45 +59,54 @@ const PersonalDetails = () => {
     );
   }, []);
 
-  console.log(userData);
-
   const handleUpdate = () => {
-    console.log(userData);
-    if (
-      userData.firstname === "" ||
-      userData.lastname === "" ||
-      userData.mobilenumber === 0 ||
-      userData.address === ""
-    ) {
-      setFlag(true);
-    } else {
-      SettingApi.updateUserDetails(
-        userData,
-        (res) => {
-          if (res.data.errorCode && res.data.errorCode === 1) {
-            alert(res.data.errorMessage);
-          } else {
-            alert(res.data.message);
-          }
-        },
-        (err) => {
-          console.log(err);
-        }
-      );
-      const formData = new FormData();
-      formData.append("file", file);
+    setBool(false);
 
-      SettingApi.uploadImage(
-        formData,
-        (res) => {
-          console.log("Response : ", res);
-        },
-        (err) => {
-          console.log(err);
-        }
-      );
-      setImage(!image);
-    }
+    const fetchConnections = () => {
+      if (
+        userData.firstname === "" ||
+        userData.lastname === "" ||
+        userData.mobilenumber === 0 ||
+        userData.address === ""
+      ) {
+        setFlag(true);
+      } else {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        SettingApi.uploadImage(
+          formData,
+          (res) => {
+            setImage(!image);
+          },
+          (err) => {
+            toast.error("Something went wrong", toastStyle);
+          }
+        );
+        SettingApi.updateUserDetails(
+          userData,
+          (res) => {
+            if (res.data.errorCode === 1) {
+              toast.warning(res.data.errorMessage, toastStyle);
+            } else {
+              toast.success(res.data.message, toastStyle);
+              setBool(true);
+            }
+          },
+          (err) => {
+            toast.error("Something went wrong", toastStyle);
+          }
+        );
+      }
+    };
+
+    // fetchConnections();
+
+    const intervalId = setTimeout(() => {
+      fetchConnections();
+    }, 1000);
+
+    return () => clearInterval(intervalId);
   };
 
   const handleClear = () => {
@@ -518,10 +528,15 @@ const PersonalDetails = () => {
             sx={{ textTransform: "capitalize", padding: "11px 22px" }}
             onClick={handleUpdate}
           >
-            Update Details
+            {bool ? (
+              "Update Details"
+            ) : (
+              <BeatLoader color="white" margin={2} size={10} />
+            )}
           </Button>
         </Box>
       </Box>
+      <Toast />
     </Settings>
   );
 };

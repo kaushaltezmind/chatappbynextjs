@@ -98,6 +98,7 @@ const SideBar = ({ open, window, mobileOpen, handleDrawerToggle }) => {
       }}
     >
       {/* <Divider /> */}
+
       <Box
         sx={{
           borderRight: "1px solid #DEE4EA",

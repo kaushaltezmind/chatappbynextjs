@@ -459,7 +459,7 @@ const ShowMessages = ({
                       }}
                     >
                       <Skeleton animation="wave" height={18} width="130px" />
-                      <Skeleton animation="wave" height={18} width="150px" />
+                      <Skeleton animation="wave" height={18} width="250px" />
                     </Box>
                   </Box>
                 );

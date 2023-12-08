@@ -12,6 +12,8 @@ import { UserApi } from "../../app/services/userApi";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import LandingPageLayout from "../../app/layouts/LandingPageLayout";
+import { toast } from "react-toastify";
+import { toastStyle } from "@/app/components/Toast/toast";
 
 const SignUp = () => {
   const [signUpCredential, setSignUpCredential] = useState({
@@ -30,7 +32,7 @@ const SignUp = () => {
       UserApi.signup(
         signUpCredential,
         (res) => {
-          alert(res);
+          toast.success(res, toastStyle);
           if (res === "Account created successfully") {
             setSignUpCredential({
               firstname: "",
@@ -46,7 +48,7 @@ const SignUp = () => {
         }
       );
     } else {
-      alert("Please check terms and conditions");
+      toast.info("Please select terms and conditions", toastStyle);
     }
   };
   return (

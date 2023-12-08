@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
 import BugReportOutlinedIcon from "@mui/icons-material/BugReportOutlined";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
@@ -15,6 +15,11 @@ import SearchIcon from "@mui/icons-material/Search";
 import { ROUTE_CUSTOMER_LIST } from "../../app/constants/page";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { toast } from "react-toastify";
+import { toastStyle } from "@/app/components/Toast/toast";
+import { CommonContext } from "@/app/store/context/commonContextProvider";
+
+let arr = [0, 0, 0, 0, 0, 0, 0];
 
 const columns = [
   { field: "userid", headerName: "ID" },
@@ -119,6 +124,7 @@ const skeletonData = [
 const graphYData = [600, 500, 400, 300, 200, 100];
 
 const Dashboard = () => {
+  const { isLoading, setIsLoading } = CommonContext();
   const [activeSale, setActiveSale] = useState("All time");
   const [rows, setRows] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
@@ -135,10 +141,11 @@ const Dashboard = () => {
             router.push("/");
             return;
           }
-          alert(res.data.errorMessage);
+          toast.error(res.data.message, toastStyle);
         } else {
           setTotalCount(res.data.data.count);
           setRows(res.data.data.records);
+          setIsLoading(false);
         }
       },
       (err) => {
@@ -371,26 +378,62 @@ const Dashboard = () => {
               </Paper>
             </Box>
           )}
-          <DataGrid
-            rows={rows}
-            columns={columns}
-            getRowId={(row) => row.userid}
-            border="none"
-            autoHeight
-            checkboxSelection
-            disableRowSelectionOnClick
-            pageSize={rowsPerPage}
-            pagination
-            page={page}
-            onPageChange={handleChangePage}
-            sx={{
-              "& .MuiDataGrid-footerContainer": {
-                display: "none",
-              },
-              fontSize: "14px",
-              color: "#6B7584",
-            }}
-          />
+          {isLoading ? (
+            <Box
+              sx={{
+                padding: "20px",
+                display: "flex",
+                flexDirection: "column",
+                gap: "20px",
+              }}
+            >
+              {arr.map(() => {
+                return (
+                  <Grid container spacing={3}>
+                    <Grid item xs={1}>
+                      <Skeleton />
+                    </Grid>
+                    <Grid item xs={1}>
+                      <Skeleton />
+                    </Grid>
+                    <Grid item xs={2}>
+                      <Skeleton />
+                    </Grid>
+                    <Grid item xs={4}>
+                      <Skeleton />
+                    </Grid>
+                    <Grid item xs={3}>
+                      <Skeleton />
+                    </Grid>
+                    <Grid item xs={1}>
+                      <Skeleton />
+                    </Grid>
+                  </Grid>
+                );
+              })}
+            </Box>
+          ) : (
+            <DataGrid
+              rows={rows}
+              columns={columns}
+              getRowId={(row) => row.userid}
+              border="none"
+              autoHeight
+              checkboxSelection
+              disableRowSelectionOnClick
+              pageSize={rowsPerPage}
+              pagination
+              page={page}
+              onPageChange={handleChangePage}
+              sx={{
+                "& .MuiDataGrid-footerContainer": {
+                  display: "none",
+                },
+                fontSize: "14px",
+                color: "#6B7584",
+              }}
+            />
+          )}
         </Box>
       </Box>
     </DashBoardPageLayout>

@@ -233,9 +233,6 @@ const Messages = () => {
           ) : (
             !isMobile && (
               <Drawer
-                // ModalProps={{
-                //   keepMounted: true, // Better open performance on mobile.
-                // }}
                 sx={
                   isMobile
                     ? {

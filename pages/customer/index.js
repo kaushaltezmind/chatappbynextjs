@@ -6,6 +6,8 @@ import {
   Avatar,
   Paper,
   InputBase,
+  Skeleton,
+  Grid,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
@@ -18,6 +20,11 @@ import { ROUTE_CUSTOMER_LIST } from "../../app/constants/page";
 import DashBoardPageLayout from "../../app/layouts/DashBoardPageLayout";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { toast } from "react-toastify";
+import { toastStyle } from "@/app/components/Toast/toast";
+import { CommonContext } from "@/app/store/context/commonContextProvider";
+
+let arr = [0,0,0,0,0,0,0]
 
 const columns = [
   { field: "userid", headerName: "ID" },
@@ -74,6 +81,7 @@ const columns = [
 ];
 
 const CustomerList = () => {
+  const { isLoading, setIsLoading } = CommonContext();
   const [rows, setRows] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [page, setPage] = React.useState(0);
@@ -82,26 +90,35 @@ const CustomerList = () => {
   const router = useRouter();
 
   useEffect(() => {
-    CustomerApi.getAllUsers(
-      (res) => {
-        if (res.data.errorCode && res.data.errorCode === 1) {
-          if (res.data.errorMessage === "You are not authorised") {
-            router.push("/");
-            return;
+    const fetchConnections = ()=>{
+      CustomerApi.getAllUsers(
+        (res) => {
+          if (res.data.errorCode && res.data.errorCode === 1) {
+            if (res.data.errorMessage === "You are not authorised") {
+              router.push("/");
+              return;
+            }
+            toast.error(res.data.message, toastStyle);
+          } else {
+            setTotalCount(res.data.data.count);
+            setRows(res.data.data.records);
+            setIsLoading(false);
           }
-          alert(res.data.errorMessage);
-        } else {
-          setTotalCount(res.data.data.count);
-          setRows(res.data.data.records);
-        }
-      },
-      (err) => {
-        console.log(err);
-      },
-      search,
-      page * rowsPerPage,
-      rowsPerPage
-    );
+        },
+        (err) => {
+          console.log(err);
+        },
+        search,
+        page * rowsPerPage,
+        rowsPerPage
+      );
+    }
+
+    const intervalId = setTimeout(() => {
+      fetchConnections();
+    }, 1000);
+
+    return () => clearInterval(intervalId);
   }, [page, rowsPerPage, search]);
 
   const handleChangePage = (event, newPage) => {
@@ -178,38 +195,75 @@ const CustomerList = () => {
             </Paper>
           </Box>
         )}
-        {/* <Box sx={{ width: "100%", display: "flex", height: "fit-content" }}> */}
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          getRowId={(row) => row.userid}
-          border="none"
-          autoHeight
-          checkboxSelection
-          disableRowSelectionOnClick
-          pageSize={rowsPerPage}
-          pagination
-          page={page}
-          onPageChange={handleChangePage}
-          sx={{
-            "& .MuiDataGrid-footerContainer": {
-              display: "none",
-            },
-            fontSize: "14px",
-            color: "#6B7584",
-          }}
-        />
-        {/* </Box> */}
-        {router.pathname !== "/dashboard" && (
-          <TablePagination
-            component="div"
-            count={totalCount}
-            page={page}
-            rowsPerPageOptions={[6, 10, 25, 50, 100]}
-            onPageChange={handleChangePage}
-            rowsPerPage={rowsPerPage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
+        {isLoading ? (
+          <Box
+            sx={{
+              padding: "20px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "20px",
+            }}
+          >
+            {
+              arr.map(()=>{
+                return <Grid container spacing={3}>
+                <Grid item xs={1}>
+                  <Skeleton />
+                </Grid>
+                <Grid item xs={1}>
+                  <Skeleton />
+                </Grid>
+                <Grid item xs={2}>
+                  <Skeleton />
+                </Grid>
+                <Grid item xs={4}>
+                  <Skeleton />
+                </Grid>
+                <Grid item xs={3}>
+                  <Skeleton />
+                </Grid>
+                <Grid item xs={1}>
+                  <Skeleton />
+                </Grid>
+              </Grid>
+              })
+            }
+          </Box>
+        ) : (
+          <Box>
+            <DataGrid
+              rows={rows}
+              columns={columns}
+              getRowId={(row) => row.userid}
+              border="none"
+              autoHeight
+              checkboxSelection
+              disableRowSelectionOnClick
+              pageSize={rowsPerPage}
+              pagination
+              page={page}
+              onPageChange={handleChangePage}
+              sx={{
+                "& .MuiDataGrid-footerContainer": {
+                  display: "none",
+                },
+                fontSize: "14px",
+                color: "#6B7584",
+              }}
+            />
+            {/* </Box> */}
+            {router.pathname !== "/dashboard" && (
+              <TablePagination
+                component="div"
+                count={totalCount}
+                page={page}
+                rowsPerPageOptions={[6, 10, 25, 50, 100]}
+                onPageChange={handleChangePage}
+                rowsPerPage={rowsPerPage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+              />
+            )}
+          </Box>
         )}
       </Box>
     </DashBoardPageLayout>

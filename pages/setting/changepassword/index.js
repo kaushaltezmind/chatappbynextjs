@@ -2,6 +2,8 @@ import { Box, TextField, Typography, Button } from "@mui/material";
 import { useState } from "react";
 import { SettingApi } from "../../../app/services/settingApi";
 import Settings from "../index";
+import { toast } from "react-toastify";
+import { toastStyle } from "@/app/components/Toast/toast";
 
 const ChangePassword = () => {
   const [passwords, setPasswords] = useState({
@@ -23,9 +25,9 @@ const ChangePassword = () => {
       passwords,
       (res) => {
         if (res.data.errorCode && res.data.errorCode === 1) {
-          alert(res.data.errorMessage);
+          toast.error(res.data.message, toastStyle);
         } else {
-          alert(res.data.message);
+          toast.success(res.data.message, toastStyle);
           setPasswords({
             currentpassword: "",
             newpassword: "",

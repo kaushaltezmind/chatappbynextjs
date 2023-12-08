@@ -8,6 +8,8 @@ import { ROUTE_SIGNUP, ROUTE_DASHBOARD } from "../../app/constants/page";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import LandingPageLayout from "../../app/layouts/LandingPageLayout";
+import { toast } from "react-toastify";
+import { toastStyle } from "@/app/components/Toast/toast";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,8 +25,9 @@ export default function Login() {
     UserApi.login(
       loginCredential,
       (res) => {
-        alert(res);
+        console.log(res);
         if (res === "Login successful") {
+          toast.success(res, toastStyle);
           setLoginCredential({ email: "", password: "" });
           let redirectPath = localStorage.getItem("redirectpath");
 
@@ -40,10 +43,12 @@ export default function Login() {
           } else {
             router.push(ROUTE_DASHBOARD);
           }
+        } else {
+          toast.error(res, toastStyle);
         }
       },
       (err) => {
-        console.log(err);
+        toast.error(res, toastStyle);
       }
     );
   };

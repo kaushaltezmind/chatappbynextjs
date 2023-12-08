@@ -6,6 +6,7 @@ import {
   IconButton,
   InputBase,
   Paper,
+  Skeleton,
   Typography,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
@@ -19,6 +20,8 @@ import { CommonContext } from "../../store/context/commonContextProvider";
 import { useRouter } from "next/router";
 
 const drawerWidth = 327;
+
+let arr = [0, 0, 0, 0, 0];
 
 const MessagesDashboard = ({
   open,
@@ -40,8 +43,13 @@ const MessagesDashboard = ({
 }) => {
   const router = useRouter();
   // const [connections, setConnections] = useState([]);
-  const { isMobile, isMessagesDashboard, setIsMessageDashboard } =
-    CommonContext();
+  const {
+    isMobile,
+    isMessagesDashboard,
+    setIsMessageDashboard,
+    isLoading,
+    setIsLoading,
+  } = CommonContext();
   const [search, setSearch] = useState("");
 
   const param = router.pathname;
@@ -52,6 +60,7 @@ const MessagesDashboard = ({
         (res) => {
           let data = res.data.data.reverse();
           setConnections(data);
+          setIsLoading(false);
         },
         (err) => {
           console.log(err);
@@ -231,7 +240,43 @@ const MessagesDashboard = ({
                 }
           }
         >
-          {newChat
+          {isLoading
+            ? arr?.map((item, i) => {
+                return (
+                  <Box
+                    key={i}
+                    sx={{
+                      display: "flex",
+                      gap: "10px",
+                      alignItems: "flex-start",
+                      padding: "16px",
+                    }}
+                  >
+                    <Box>
+                      <Skeleton
+                        animation="wave"
+                        variant="circular"
+                        sx={
+                          isMobile
+                            ? { width: "32px", height: "32px" }
+                            : { width: "40px", height: "40px" }
+                        }
+                      />
+                    </Box>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "5px",
+                      }}
+                    >
+                      <Skeleton animation="wave" height={18} width="130px" />
+                      <Skeleton animation="wave" height={18} width="150px" />
+                    </Box>
+                  </Box>
+                );
+              })
+            : newChat
             ? newUserData?.map((user, i) => {
                 return (
                   <NewUserList

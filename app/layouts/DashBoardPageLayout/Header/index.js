@@ -10,6 +10,8 @@ import { CommonContext } from "../../../store/context/commonContextProvider";
 import { useRouter } from "next/router";
 import { SettingApi } from "@/app/services/settingApi";
 import { config } from "@/app/config";
+import { toast } from "react-toastify";
+import { toastStyle } from "@/app/components/Toast/toast";
 
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
@@ -48,9 +50,9 @@ const Header = ({ setOpenDrawer, handleDrawerToggle, openDrawer }) => {
             router.push("/");
             return;
           }
-          alert(res.data.errorMessage);
+          toast.error(res.data.message, toastStyle);
         } else {
-          setSelectedImage(config.apiUrl + res.data.data.image);
+          setSelectedImage(res.data.data.image);
         }
       },
       (err) => {

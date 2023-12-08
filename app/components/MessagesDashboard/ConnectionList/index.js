@@ -22,6 +22,8 @@ const ConnectionList = ({
     CommonContext();
 
   const dateTime = user.time;
+
+  console.log(dateTime);
   const [date, time] = dateTime.split(" ");
 
   const currentDate = new Date();
