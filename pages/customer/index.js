@@ -24,7 +24,7 @@ import { toast } from "react-toastify";
 import { toastStyle } from "@/app/components/Toast/toast";
 import { CommonContext } from "@/app/store/context/commonContextProvider";
 
-let arr = [0,0,0,0,0,0,0]
+let arr = [0, 0, 0, 0, 0, 0, 0];
 
 const columns = [
   { field: "userid", headerName: "ID" },
@@ -90,7 +90,7 @@ const CustomerList = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const fetchConnections = ()=>{
+    const fetchConnections = () => {
       CustomerApi.getAllUsers(
         (res) => {
           if (res.data.errorCode && res.data.errorCode === 1) {
@@ -112,7 +112,7 @@ const CustomerList = () => {
         page * rowsPerPage,
         rowsPerPage
       );
-    }
+    };
 
     const intervalId = setTimeout(() => {
       fetchConnections();
@@ -204,30 +204,30 @@ const CustomerList = () => {
               gap: "20px",
             }}
           >
-            {
-              arr.map(()=>{
-                return <Grid container spacing={3}>
-                <Grid item xs={1}>
-                  <Skeleton />
+            {arr.map((_, index) => {
+              return (
+                <Grid container spacing={3} key={index}>
+                  <Grid item xs={1}>
+                    <Skeleton />
+                  </Grid>
+                  <Grid item xs={1}>
+                    <Skeleton />
+                  </Grid>
+                  <Grid item xs={2}>
+                    <Skeleton />
+                  </Grid>
+                  <Grid item xs={4}>
+                    <Skeleton />
+                  </Grid>
+                  <Grid item xs={3}>
+                    <Skeleton />
+                  </Grid>
+                  <Grid item xs={1}>
+                    <Skeleton />
+                  </Grid>
                 </Grid>
-                <Grid item xs={1}>
-                  <Skeleton />
-                </Grid>
-                <Grid item xs={2}>
-                  <Skeleton />
-                </Grid>
-                <Grid item xs={4}>
-                  <Skeleton />
-                </Grid>
-                <Grid item xs={3}>
-                  <Skeleton />
-                </Grid>
-                <Grid item xs={1}>
-                  <Skeleton />
-                </Grid>
-              </Grid>
-              })
-            }
+              );
+            })}
           </Box>
         ) : (
           <Box>

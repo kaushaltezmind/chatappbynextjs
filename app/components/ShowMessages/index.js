@@ -38,6 +38,8 @@ const settings = [
 
 const arr = [0, 0, 0, 0];
 
+let file = {};
+
 const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })(
   ({ theme, open }) => ({
     flexGrow: 1,
@@ -66,6 +68,8 @@ const ShowMessages = ({
   setCheck,
   message,
   setMessage,
+  selectedFiles,
+  setSelectedFiles,
 }) => {
   const router = useRouter();
   const {
@@ -199,9 +203,26 @@ const ShowMessages = ({
           replyOf: isReply.user.message,
           replyTo: isReply.user.sender,
           messageTime: isReply.time,
+          attachments: [],
         },
         (res) => {
+          const messageid = res.data;
           setFullMessage(message);
+
+          const formData = new FormData();
+
+          formData.append("file", file);
+
+          MesssagesApi.sendAttachmentToConnection(
+            messageid,
+            formData,
+            (res) => {
+              console.log(res);
+            },
+            (err) => {
+              console.log(err);
+            }
+          );
         },
         (err) => {
           console.log(err);
@@ -212,7 +233,6 @@ const ShowMessages = ({
     MesssagesApi.getAllConnections(
       (res) => {
         let data = res.data.data.reverse();
-        console.log("", data);
         setConnections(data);
       },
       (err) => {
@@ -224,6 +244,7 @@ const ShowMessages = ({
     MesssagesApi.getConnectionMessages(
       param.connection,
       (res) => {
+        console.log("Messg : ", res.data);
         setChatHistory(res.data.data);
       },
       (err) => {
@@ -232,6 +253,25 @@ const ShowMessages = ({
     );
 
     setIsReply({ flag: false, user: {}, time: "" });
+    setSelectedFiles([]);
+  };
+
+  const handleBadgeChange = () => {
+    document.getElementById("fileInput").click();
+  };
+
+  const handleFileChange = (event) => {
+    file = event.target.files[0];
+
+    if (file) {
+      const reader = new FileReader();
+
+      reader.onload = (e) => {
+        setSelectedFiles(e.target.result);
+      };
+
+      reader.readAsDataURL(file);
+    }
   };
 
   const formatChatDate = (dateString) => {
@@ -678,9 +718,17 @@ const ShowMessages = ({
                             }
                       }
                       textAlign="center"
+                      onClick={handleBadgeChange}
                     >
                       {setting.icon} {setting.title}
                     </Typography>
+                    <TextField
+                      type="file"
+                      id="fileInput"
+                      accept="image/*"
+                      style={{ display: "none" }}
+                      onChange={handleFileChange}
+                    />
                   </MenuItem>
                 ))}
               </Menu>
@@ -734,8 +782,8 @@ const ShowMessages = ({
                       textAlign: "left",
                       gap: "2px",
                       backgroundColor: "#F5F5F6",
-                      borderRadius: "6px",
-                      borderLeft: "2px solid #0064D9",
+                      borderRadius: "6px 6px 6px 0px",
+                      borderLeft: "3px solid #0064D9",
                     }}
                   >
                     <Box

@@ -42,12 +42,32 @@ export const MesssagesApi = {
         if (res.data.errorCode === 1) {
           successCallback(res.data.errorMessage);
         } else {
-          successCallback(res.data.message);
+          successCallback(res.data);
         }
       })
       .catch((err) => {
         errorCallback(err);
       });
+  },
+  sendAttachmentToConnection: (messageid, formdata, successCallback, errorCallback)=>{
+    return axios
+    .post(config.apiUrl + `/attachments/${messageid}`,formdata, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem(AUTH_TOKEN)}`,
+        "Content-Type": "multipart/form-data",
+      },
+    })
+    .then((res) => {
+      console.log(res)
+      // if (res.data.errorCode === 1) {
+      //   successCallback(res.data.errorMessage);
+      // } else {
+      //   successCallback(res.data.message);
+      // }
+    })
+    .catch((err) => {
+      errorCallback(err);
+    });
   },
   getAllUsers: (
     successCallback,

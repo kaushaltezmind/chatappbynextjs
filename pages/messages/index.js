@@ -134,7 +134,7 @@ const Messages = () => {
                   height: "16px",
                   color: "#85878A",
                 }}
-              />{" "}
+              />
               New Chat
             </Typography>
           ) : (

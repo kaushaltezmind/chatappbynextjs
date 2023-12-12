@@ -48,7 +48,7 @@ export default function Login() {
         }
       },
       (err) => {
-        toast.error(res, toastStyle);
+        toast.error(err, toastStyle);
       }
     );
   };

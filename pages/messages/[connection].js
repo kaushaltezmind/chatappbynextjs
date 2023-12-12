@@ -41,7 +41,7 @@ const Messages = () => {
   const [active1, setActive1] = useState();
   const [active, setActive] = useState();
   const [message, setMessage] = useState("");
-
+  const [selectedFiles, setSelectedFiles] = useState([])
   const [check, setCheck] = useState(false);
 
   useEffect(() => {}, [isProfile, isMessagesDashboard, isShowMessages]);
@@ -304,6 +304,8 @@ const Messages = () => {
                 setCheck={setCheck}
                 message={message}
                 setMessage={setMessage}
+				selectedFiles={selectedFiles}
+				setSelectedFiles={setSelectedFiles}
               />
             </Main>
           ) : (
@@ -322,6 +324,8 @@ const Messages = () => {
                   setCheck={setCheck}
                   message={message}
                   setMessage={setMessage}
+				  selectedFiles={selectedFiles}
+				setSelectedFiles={setSelectedFiles}
                 />
               </Main>
             )

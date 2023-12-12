@@ -129,6 +129,8 @@ const PersonalDetails = () => {
 
   const handleFileChange = (event) => {
     file = event.target.files[0];
+
+    console.log(file.type);
     if (file) {
       const reader = new FileReader();
 
